@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pennywise Login</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --panel-soft: #eff6ff;
+        --primary: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --secondary: #7c3aed;
+        --text: #162033;
+        --muted: #5e6b85;
+        --border: #dfe7f3;
+        --danger: #d93025;
+        --success: #1e9e71;
+        --shadow: 0 25px 55px rgba(18, 32, 52, 0.16);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), transparent 26%),
+          radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.18), transparent 28%),
+          linear-gradient(135deg, #eef5ff 0%, #f8fafc 100%);
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+      }
+
+      .auth-shell {
+        width: min(100%, 980px);
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(223, 231, 243, 0.9);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .promo-panel {
+        padding: 42px 36px;
+        background: linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(124, 58, 237, 0.08));
+        border-right: 1px solid var(--border);
+      }
+
+      .promo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(59, 130, 246, 0.12);
+        color: var(--primary-dark);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .promo-panel h2 {
+        margin: 26px 0 12px;
+        font-size: clamp(2.2rem, 3vw, 3.2rem);
+        line-height: 1.05;
+        letter-spacing: -0.06em;
+      }
+
+      .promo-panel p {
+        margin: 0;
+        max-width: 28rem;
+        color: var(--muted);
+        font-size: 1.06rem;
+        line-height: 1.7;
+      }
+
+      .feature-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(223, 231, 243, 0.9);
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .feature-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+      }
+
+      .login-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 30px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .login-card {
+        width: min(100%, 420px);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(18, 32, 52, 0.08);
+        padding: 28px 24px 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.04em;
+      }
+
+      .brand-mark {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #fff;
+        font-size: 1.2rem;
+        box-shadow: 0 10px 18px rgba(59, 130, 246, 0.25);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.9rem, 4vw, 2.5rem);
+        letter-spacing: -0.05em;
+      }
+
+      .subtitle {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .alert {
+        margin-bottom: 18px;
+        background: rgba(217, 48, 37, 0.08);
+        border: 1px solid rgba(217, 48, 37, 0.18);
+        color: var(--danger);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      form {
+        display: grid;
+        gap: 16px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 1rem;
+        color: var(--text);
+        background: #fff;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      input::placeholder {
+        color: #8a97ad;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.10);
+      }
+
+      .field-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: -4px;
+      }
+
+      .checkbox-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .checkbox-wrap input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+      }
+
+      .inline-link {
+        color: var(--primary-dark);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .auth-switch {
+        margin: 20px 0 0;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.9rem;
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        padding: 13px 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 14px 26px rgba(59, 130, 246, 0.24);
+      }
+
+      button:hover {
+        filter: brightness(1.03);
+        transform: translateY(-1px);
+      }
+
+      .helper-text {
+        margin-top: 4px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.88rem;
+      }
+
+      @media (max-width: 820px) {
+        .auth-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .promo-panel {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+          padding: 24px 22px 18px;
+        }
+
+        .login-panel {
+          padding: 20px 18px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="promo-panel" aria-label="Pennywise benefits">
+        <div class="promo-badge">Smart budgeting</div>
+        <h2>Stay ahead of every rupee.</h2>
+        <p>
+          Track spending, monitor budgets, and understand where your money is going with a cleaner,
+          calmer way to manage your finances.
+        </p>
+
+        <div class="feature-list" aria-label="Key features">
+          <div class="feature-item"><span class="feature-dot" aria-hidden="true"></span> Real-time spending insights</div>
+          <div class="feature-item"><span class="feature-dot" aria-hidden="true"></span> Budget reminders that keep goals on track</div>
+          <div class="feature-item"><span class="feature-dot" aria-hidden="true"></span> Simple transaction tracking for every day</div>
+        </div>
+      </section>
+
+      <section class="login-panel">
+        <div class="login-card">
+          <div class="brand" aria-label="Pennywise home">
+            <span class="brand-mark" aria-hidden="true">₹</span>
+            <span>Pennywise</span>
+          </div>
+
+          <h1>{{ "Create your account" if mode == "register" else "Welcome back" }}</h1>
+          <p class="subtitle">
+            {{ "Register with your email and password to start tracking your finances." if mode == "register" else "Sign in to view your spending, budgets, and recent activity." }}
+          </p>
+
+          {% if error %}
+            <div class="alert" role="alert">{{ error }}</div>
+          {% endif %}
+
+          <form method="post" action="{{ url_for('register' if mode == 'register' else 'login') }}">
+            <label>
+              Email
+              <input
+                type="email"
+                name="email"
+                value="{{ email or '' }}"
+                placeholder="you@example.com"
+                autocomplete="email"
+                maxlength="120"
+                required
+              />
+            </label>
+
+            <label>
+              Password
+              <input
+                type="password"
+                name="password"
+                placeholder="{{ 'At least 8 characters' if mode == 'register' else 'Enter your password' }}"
+                autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}"
+                {% if mode == 'register' %}minlength="8" maxlength="128"{% endif %}
+                required
+              />
+            </label>
+
+            {% if mode == "register" %}
+              <label>
+                Confirm password
+                <input
+                  type="password"
+                  name="confirm_password"
+                  placeholder="Re-enter your password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  maxlength="128"
+                  required
+                />
+              </label>
+            {% else %}
+              <div class="field-row">
+              <label class="checkbox-wrap" for="remember_me">
+                <input id="remember_me" type="checkbox" name="remember_me" />
+                <span>Remember me</span>
+              </label>
+              </div>
+            {% endif %}
+
+            <button type="submit">{{ "Create account" if mode == "register" else "Login" }}</button>
+          </form>
+
+          <p class="auth-switch">
+            {% if mode == "register" %}
+              Already registered? <a href="{{ url_for('login') }}" class="inline-link">Log in</a>
+            {% else %}
+              New to Pennywise? <a href="{{ url_for('register') }}" class="inline-link">Create an account</a>
+            {% endif %}
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

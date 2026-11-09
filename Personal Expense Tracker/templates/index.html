@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>Personal Expense Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Pennywise home">
+          <span class="brand-mark" aria-hidden="true">₹</span>
+          <span>Pennywise</span>
+        </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a class="nav-link active" href="#overview" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="8" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="15" width="7" height="6" rx="1.5"/></svg>
+            Overview
+          </a>
+          <a class="nav-link" href="#transactions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg>
+            Transactions
+          </a>
+          <a class="nav-link" href="#insights">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/></svg>
+            Insights
+          </a>
+        </nav>
+
+        <div class="sidebar-note">
+          <div class="note-icon" aria-hidden="true"></div>
+          <p class="note-title">Small steps add up.</p>
+          <p class="note-copy">Keep an eye on your spending and make room for what matters.</p>
+          <a href="#budget-card">View your budget <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="avatar">{{ username[:2]|upper }}</div>
+          <div class="profile-copy">
+            <strong>{{ username }}</strong>
+            <span>Personal account</span>
+          </div>
+          <button class="icon-button footer-menu" type="button" aria-label="Account options">···</button>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-divider">/</span><strong>Overview</strong></div>
+          <div class="topbar-actions">
+            <label class="month-picker">
+              <span class="sr-only">Select month</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+              <input id="monthPicker" type="month" />
+            </label>
+            <button class="button button-primary" id="addTransactionButton" type="button">
+              <span class="plus" aria-hidden="true">+</span> Add transaction
+            </button>
+            <a class="button button-quiet" href="{{ url_for('logout') }}">Logout</a>
+          </div>
+        </header>
+
+        <section class="page-heading">
+          <div>
+            <p class="eyebrow" id="todayLabel">YOUR MONEY, IN FOCUS</p>
+            <h1>Good morning, {{ username }} <span class="wave" aria-hidden="true"></span></h1>
+            <p class="heading-copy">Here’s how your finances are looking this month.</p>
+          </div>
+          <button class="button button-quiet" id="exportButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+            Export
+          </button>
+        </section>
+
+        <section class="summary-grid" aria-label="Monthly summary">
+          <article class="summary-card balance-card">
+            <div class="card-topline">
+              <span class="card-label">Total balance</span>
+              <span class="card-icon balance-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18m-5 5h2"/></svg>
+              </span>
+            </div>
+            <p class="metric" id="balanceMetric">₹0.00</p>
+            <p class="card-caption"><span class="status-dot green"></span> Income minus expenses this month</p>
+          </article>
+          <article class="summary-card">
+            <div class="card-topline">
+              <span class="card-label">Income</span>
+              <span class="card-icon income-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 19V5m0 0L6 11m6-6 6 6"/></svg>
+              </span>
+            </div>
+            <p class="metric" id="incomeMetric">₹0.00</p>
+            <p class="card-caption"><span class="status-dot green"></span> Money coming in</p>
+          </article>
+          <article class="summary-card">
+            <div class="card-topline">
+              <span class="card-label">Expenses</span>
+              <span class="card-icon expense-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14m0 0 6-6m-6 6-6-6"/></svg>
+              </span>
+            </div>
+            <p class="metric" id="expenseMetric">₹0.00</p>
+            <p class="card-caption"><span class="status-dot coral"></span> Money going out</p>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel spending-panel" id="insights">
+            <div class="panel-heading">
+              <div>
+                <h2>Spending overview</h2>
+                <p class="panel-subtitle">A little perspective on your spending</p>
+              </div>
+              <span class="period-pill" id="chartPeriod">This month</span>
+            </div>
+            <div class="chart-summary">
+              <div>
+                <span class="chart-kicker">TOTAL SPENT</span>
+                <strong id="chartTotal">₹0.00</strong>
+              </div>
+              <span class="chart-legend"><i aria-hidden="true"></i> Expenses</span>
+            </div>
+            <div class="chart-wrap" id="spendingChart" aria-label="Weekly spending chart"></div>
+          </article>
+
+          <article class="panel budget-panel" id="budget-card">
+            <div class="panel-heading">
+              <div>
+                <h2>Monthly budget</h2>
+                <p class="panel-subtitle">Give every rupee a direction</p>
+              </div>
+              <span class="budget-symbol" aria-hidden="true"></span>
+            </div>
+            <div class="budget-amount-row">
+              <div>
+                <span class="chart-kicker">SPENT SO FAR</span>
+                <strong id="budgetSpent">₹0.00</strong>
+              </div>
+              <label class="budget-input-wrap">
+                <span class="sr-only">Monthly budget amount</span>
+                <span>₹</span><input id="budgetInput" type="number" min="0" step="50" inputmode="decimal" aria-label="Monthly budget amount" />
+              </label>
+            </div>
+            <div class="progress-track" role="progressbar" aria-label="Monthly budget used" aria-valuemin="0" aria-valuemax="100">
+              <span class="progress-fill" id="budgetProgress"></span>
+            </div>
+            <div class="budget-foot">
+              <span id="budgetPercent">0% used</span>
+              <span id="budgetRemaining">₹0.00 left</span>
+            </div>
+            <p class="budget-hint" id="budgetHint">You’re off to a good start. Keep it up!</p>
+          </article>
+        </section>
+
+        <section class="panel transactions-panel" id="transactions">
+          <div class="transactions-heading">
+            <div>
+              <h2>Recent transactions</h2>
+              <p class="panel-subtitle">A closer look at where your money goes</p>
+            </div>
+            <div class="transaction-tools">
+              <label class="search-box">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+                <span class="sr-only">Search transactions</span>
+                <input id="searchInput" type="search" placeholder="Search..." />
+              </label>
+              <label class="filter-select">
+                <span class="sr-only">Filter by category</span>
+                <select id="categoryFilter"><option value="all">All categories</option></select>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">TRANSACTION</th>
+                  <th scope="col">CATEGORY</th>
+                  <th scope="col">DATE</th>
+                  <th scope="col" class="amount-heading">AMOUNT</th>
+                  <th scope="col" aria-label="Actions"></th>
+                </tr>
+              </thead>
+              <tbody id="transactionRows"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState" hidden>
+              <span class="empty-icon" aria-hidden="true">⌕</span>
+              <strong>No transactions found</strong>
+              <p>Try another search or add your first transaction.</p>
+            </div>
+          </div>
+          <div class="table-footer">
+            <span id="transactionCount">Showing 0 transactions</span>
+            <a href="#transactions" id="clearFilters">Clear filters <span aria-hidden="true">→</span></a>
+          </div>
+        </section>
+
+        <footer class="page-footer">Made for a little more peace of mind <span aria-hidden="true"></span></footer>
+      </main>
+    </div>
+
+    <dialog class="transaction-dialog" id="transactionDialog" aria-labelledby="dialogTitle">
+      <form id="transactionForm">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">KEEP IT UP TO DATE</p>
+            <h2 id="dialogTitle">Add transaction</h2>
+          </div>
+          <button class="icon-button close-dialog" id="closeDialogButton" type="button" aria-label="Close dialog">×</button>
+        </div>
+        <label class="form-field">
+          <span>Transaction name</span>
+          <input name="description" type="text" maxlength="60" placeholder="e.g. Groceries, lunch, or rent" required />
+        </label>
+        <div class="form-row">
+          <label class="form-field">
+            <span>Amount</span>
+            <div class="amount-field"><span>₹</span><input name="amount" type="number" min="0.01" step="0.01" placeholder="Enter amount" required /></div>
+          </label>
+          <label class="form-field">
+            <span>Type</span>
+            <select name="type">
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-field">
+            <span>Category</span>
+            <select name="category" id="formCategory"></select>
+          </label>
+          <label class="form-field">
+            <span>Date</span>
+            <input name="date" type="date" required />
+          </label>
+        </div>
+        <div class="dialog-actions">
+          <button class="button button-quiet" id="cancelDialogButton" type="button">Cancel</button>
+          <button class="button button-primary" type="submit">Save transaction</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
